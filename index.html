@@ -51,6 +51,15 @@ html, body { height: 100%; font-family: system-ui, sans-serif; }
 }
 .tab:hover { background: #f0f0f0; }
 .tab.active { color: #000; font-weight: 600; background: #eaeaea; }
+
+.form {
+z-index: 0;
+}
+
+.form.active {
+z-index: 2;
+}
+
 </style>
 </head>
 <body>
@@ -58,11 +67,26 @@ html, body { height: 100%; font-family: system-ui, sans-serif; }
 <div class="viewport">
   <div class="content">
     <div class="page active" data-index="0"><h2>Overview</h2><p>TODO</p></div>
-    <div class="page" data-index="1"><h2>Reminders</h2><p>TODO</p></div>
-    <div class="page" data-index="2"><h2>Todo</h2><p>TODO</p></div>
-    <div class="page" data-index="3"><h2>Idea</h2><p>TODO</p></div>
-    <div class="page" data-index="4"><h2>Regrets</h2><p>TODO</p></div>
-    <div class="page" data-index="5"><h2>Ongoing</h2><p>TODO</p></div>
+    <div class="page" data-index="1"><table id="tab-1"></table></div>
+    <div class="page" data-index="2"><table id="tab-2"></table></div>
+    <div class="page" data-index="3"><table id="tab-3"></table></div>
+    <div class="page" data-index="4"><table id="tab-4"></table></div>
+    <div class="page" data-index="5"><table id="tab-4"></table></div>
+  </div>
+
+  <div class="content">
+    <div class="form" id="form">
+    <form onsubmit="return ent_add(event)">
+      <label for="ent_title">Title</label><br>
+      <input type="text" id="ent_title" name="ent_title"><br>
+      <label for="ent_asset">Assets</label><br>
+      <input type="text" id="ent_asset" name="ent_asset">
+      <label for="ent_plan">Plan</label><br>
+      <input type="text" id="ent_plan" name="ent_plan">
+      <label for="ent_due">Due</label><br>
+      <input type="text" id="ent_due" name="ent_due">
+    </form>
+    </div>
   </div>
 
   <div class="tabs">
@@ -75,6 +99,48 @@ html, body { height: 100%; font-family: system-ui, sans-serif; }
   </div>
 </div>
 
+<div onclick="addnew()" style="position: fixed; bottom: 20px; right: 20px; width: 50px; height: 50px; background: #000; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer;">+</div>
+
+<script>
+var current_page = 0
+const pages = document.querySelectorAll('.page');
+const keys = Object.keys(localStorage);
+for (let key of keys) {
+  const value = localStorage.getItem(key);
+  ks = key.split(':')
+  type = ks[0]
+  id = ks[1]
+  data = JSON.parse(value)
+  document.getElementById("tab-" + type).innerHTML += `
+  <tr>
+    <td>${data.ent_title}</td>
+    <td>${data.ent_due}</td>
+    <td style="color: green"> &#11044 </td>
+  </tr>
+  `
+}
+
+function addnew() {
+  const forms = document.querySelectorAll('.form');
+  forms.forEach(t => t.classList.toggle('active', true))
+}
+
+var form = document.getElementById("form")
+const shortId = () => Math.random().toString(36).substring(2);
+function ent_add(event) {
+  event.preventDefault();
+  const formData = new FormData(form);
+  const formProps = Object.fromEntries(formData);
+  v = JSON.stringify(formProps);
+  k = current_page + ':' + shortId()
+  localStorage.setItem(k, v)
+  return true
+}
+
+
+</script>
+
+
 <script>
 const tabs = document.querySelectorAll('.tab');
 const pages = document.querySelectorAll('.page');
@@ -82,6 +148,7 @@ const pages = document.querySelectorAll('.page');
 tabs.forEach(tab => {
   tab.addEventListener('click', () => {
     const idx = tab.dataset.index;
+    current_page = idx
     tabs.forEach(t => t.classList.toggle('active', t.dataset.index === idx));
     pages.forEach(p => p.classList.toggle('active', p.dataset.index === idx));
   });
