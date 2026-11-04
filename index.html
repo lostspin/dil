@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minimal Bottom Tabs</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { height: 100%; font-family: system-ui, sans-serif; }
+
+.viewport {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.content {
+  flex: 1;
+  position: relative;
+}
+
+.page {
+  position: absolute;
+  inset: 0;
+  padding: 24px;
+  overflow-y: auto;
+  background: #fff;
+  z-index: 0;
+}
+.page.active { z-index: 1; }
+
+.tabs {
+  display: flex;
+  overflow-x: auto;
+  scrollbar-width: none;
+  border-top: 1px solid #ddd;
+  background: #fafafa;
+}
+.tabs::-webkit-scrollbar { display: none; }
+
+.tab {
+  flex: 0 0 calc(100% / 3);
+  text-align: center;
+  padding: 14px 0;
+  cursor: pointer;
+  user-select: none;
+  color: #666;
+  font-size: 14px;
+  transition: color 0.15s, background 0.15s;
+}
+.tab:hover { background: #f0f0f0; }
+.tab.active { color: #000; font-weight: 600; background: #eaeaea; }
+</style>
+</head>
+<body>
+
+<div class="viewport">
+  <div class="content">
+    <div class="page active" data-index="0"><h2>Overview</h2><p>TODO</p></div>
+    <div class="page" data-index="1"><h2>Reminders</h2><p>TODO</p></div>
+    <div class="page" data-index="2"><h2>Todo</h2><p>TODO</p></div>
+    <div class="page" data-index="3"><h2>Idea</h2><p>TODO</p></div>
+    <div class="page" data-index="4"><h2>Regrets</h2><p>TODO</p></div>
+    <div class="page" data-index="5"><h2>Ongoing</h2><p>TODO</p></div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" data-index="0">Overview</div>
+    <div class="tab" data-index="1">Reminders</div>
+    <div class="tab" data-index="2">Todo</div>
+    <div class="tab" data-index="3">Idea</div>
+    <div class="tab" data-index="4">Regrets</div>
+    <div class="tab" data-index="5">Ongoing</div>
+  </div>
+</div>
+
+<script>
+const tabs = document.querySelectorAll('.tab');
+const pages = document.querySelectorAll('.page');
+
+tabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    const idx = tab.dataset.index;
+    tabs.forEach(t => t.classList.toggle('active', t.dataset.index === idx));
+    pages.forEach(p => p.classList.toggle('active', p.dataset.index === idx));
+  });
+});
+</script>
+
+</body>
+</html>
