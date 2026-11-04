@@ -53,7 +53,8 @@ html, body { height: 100%; font-family: system-ui, sans-serif; }
 .tab.active { color: #000; font-weight: 600; background: #eaeaea; }
 
 .form {
-z-index: 0;
+z-index: -1;
+display: flex;
 }
 
 .form.active {
@@ -72,11 +73,8 @@ z-index: 2;
     <div class="page" data-index="3"><table id="tab-3"></table></div>
     <div class="page" data-index="4"><table id="tab-4"></table></div>
     <div class="page" data-index="5"><table id="tab-4"></table></div>
-  </div>
-
-  <div class="content">
-    <div class="form" id="form">
-    <form onsubmit="return ent_add(event)">
+    <div class="page form">
+    <form id="form" onsubmit="return ent_add(event)">
       <label for="ent_title">Title</label><br>
       <input type="text" id="ent_title" name="ent_title"><br>
       <label for="ent_asset">Assets</label><br>
@@ -85,9 +83,12 @@ z-index: 2;
       <input type="text" id="ent_plan" name="ent_plan">
       <label for="ent_due">Due</label><br>
       <input type="text" id="ent_due" name="ent_due">
+      <input type="submit" submit>
     </form>
     </div>
   </div>
+
+
 
   <div class="tabs">
     <div class="tab active" data-index="0">Overview</div>
@@ -103,7 +104,6 @@ z-index: 2;
 
 <script>
 var current_page = 0
-const pages = document.querySelectorAll('.page');
 const keys = Object.keys(localStorage);
 for (let key of keys) {
   const value = localStorage.getItem(key);
@@ -116,11 +116,13 @@ for (let key of keys) {
     <td>${data.ent_title}</td>
     <td>${data.ent_due}</td>
     <td style="color: green"> &#11044 </td>
+    <td> <button> del </button></td>
   </tr>
   `
 }
 
 function addnew() {
+  console.log("liu")
   const forms = document.querySelectorAll('.form');
   forms.forEach(t => t.classList.toggle('active', true))
 }
@@ -134,6 +136,8 @@ function ent_add(event) {
   v = JSON.stringify(formProps);
   k = current_page + ':' + shortId()
   localStorage.setItem(k, v)
+  const forms = document.querySelectorAll('.form');
+  forms.forEach(t => t.classList.toggle('active', false))
   return true
 }
 
